@@ -1,8 +1,7 @@
-import csv
-import numpy as np
-
 class CrocMonitor:
-    
+
+    import numpy as np
+    import csv
     def __init__(self, name, age):
         #choose which one you want
         self.locationList = []
@@ -13,7 +12,10 @@ class CrocMonitor:
             csv_reader = csv.reader(f)
             for line in csv_reader:
                 pointName=line[0]
+                x=line[1]
+                y=line[2]
                 #etc
+                self.locationList[0] = [pointName, x, y ] #etc
         f.close()
     
     def computeDistance (self, a, b):
