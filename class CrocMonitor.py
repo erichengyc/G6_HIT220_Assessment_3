@@ -1,7 +1,9 @@
+import numpy as np
+import csv
+
 class CrocMonitor:
 
-    import numpy as np
-    import csv
+    
     def __init__(self, name, age):
         #choose which one you want
         self.locationList = []
