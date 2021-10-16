@@ -1,6 +1,10 @@
 import numpy as np
 import csv
 
+file_data = open('Locations.csv')
+for row in file_data:
+    print(row)
+
 class CrocMonitor:
 
     
@@ -20,22 +24,22 @@ class CrocMonitor:
                 self.locationList[0] = [pointName, x, y ] #etc
         f.close()
     
-    def computeDistance (self, a, b):
-        # provide the distance between two points a and b on the paths. They may not be adjacent
+    # def computeDistance (self, a, b):
+    #     # provide the distance between two points a and b on the paths. They may not be adjacent
         
    
-    def computeCosting(self, a, b):
-    # unit costs for scanning between two locations and give path for rangers to to follow, returned as an array
+    # def computeCosting(self, a, b):
+    # # unit costs for scanning between two locations and give path for rangers to to follow, returned as an array
     
-    def improveDistance (self, a, b):
-    #return edge blocked as a duple (c,d) and scalled increase in distance between points
+    # def improveDistance (self, a, b):
+    # #return edge blocked as a duple (c,d) and scalled increase in distance between points
 
-    def countCroc(self, beach):
-    #count the number of crocs likely in a 10 mile radius of a beach. Return an array of locations and numbers
+    # def countCroc(self, beach):
+    # #count the number of crocs likely in a 10 mile radius of a beach. Return an array of locations and numbers
 
 
-    def locateOptimalBlockage(self,a,b):
-    # return the edge blocked and the increase in protection provided using another weighting
+    # def locateOptimalBlockage(self,a,b):
+    # # return the edge blocked and the increase in protection provided using another weighting
 
-    def minTime(self,a,b):
-    #return array of points trevelled and the time required
+    # def minTime(self,a,b):
+    # #return array of points trevelled and the time required
