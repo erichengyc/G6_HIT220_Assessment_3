@@ -11,15 +11,26 @@
 # have to travel. 
 
 
+import csv
+with open('Locations.csv', encoding='utf-8-sig') as csvfile:
+    reader = csv.reader(csvfile)
+
+    count = 0
+    fsa = []
+
+    for row in reader:
+        count += 1
+        # print(row[0])
+        fsa.append(row[0])
+        # if count > 10: 
+        #     break
+print(fsa)
+
+
 import numpy as np
 import csv
 
-file_data = open('Locations.csv')
-for row in file_data:
-    print(row)
-
 class CrocMonitor:
-
     
     def __init__(self, name, age):
         #choose which one you want
@@ -30,16 +41,20 @@ class CrocMonitor:
         with open('Locations.csv') as f:
             csv_reader = csv.reader(f)
             for line in csv_reader:
-                pointName=line[0]
+                Croc_sightings=line[0]
                 x=line[1]
                 y=line[2]
-                #etc
-                self.locationList[0] = [pointName, x, y ] #etc
+                num_season = line[3]
+                neighbours= line[4]
+                Water_land_route = line[5]
+                self.locationList[0] = [Croc_sightings, x, y,num_season, neighbours, Water_land_route ]
         f.close()
+
+if __name__ == '__main__':
+    locationList[0]
     
     # def computeDistance (self, a, b):
     #     # provide the distance between two points a and b on the paths. They may not be adjacent
-        
    
     # def computeCosting(self, a, b):
     # # unit costs for scanning between two locations and give path for rangers to to follow, returned as an array
@@ -58,3 +73,17 @@ class CrocMonitor:
     # #return array of points trevelled and the time required
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+# References:
+# CSV Column To Python List - https://youtu.be/4mqyi8Vqk78
