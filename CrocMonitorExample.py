@@ -1,12 +1,11 @@
 from typing import Sized
 import csv
-
 import math
 import numpy as np
+
 size=100
 class CrocMonitor:
     locationList =[]
-    import csv
     def __init__(self, size):
         
         self.locationList = []
@@ -32,7 +31,7 @@ class CrocMonitor:
                 if line[5] == "W":
                     water=True
 
-                self.locationList .append( [pointName,  x, y, number, edge, water] ) # etc
+                self.locationList.append( [pointName,  x, y, number, edge, water] ) # etc
                 
                 if not pointName in self.points:
                    
@@ -64,9 +63,9 @@ class CrocMonitor:
    
       
 
-    def computePathDistance (self,a,b):
+    def computePathDistance (self,path):
        
-        #provide the distance between two points a and b on a paths. Assume not adjacent
+        #provide the distance between two points a and b, as the end points on a path. Assume not adjacent
         distance=0
         return distance
   
@@ -83,47 +82,47 @@ class CrocMonitor:
         distance=0
         return distance
 
-    def computeCosting(self, a, b):
-    # unit costs for scanning between two locations and give path for rangers to follow, returned as an array
+    def computeCosting(self, a, b): #Kevin
+    # unit costs for scanning all points on all paths between two locations and give exhaustive path for rangers to follow, returned as an list
         path=[]
         costing=0
         return costing,path
     
-    def improveDistance (self, a, b):
+    def improveDistance (self, a, b): #Melisha
     #return point blocked as a value on map (eg A1) and scaled increase in distance between points
         point="A1"
         scaledImprovement=0
         return point, scaledImprovement
 
-    def countCroc(self, beach, x):
+    def countCroc(self, beach, x): #Eric 
     #count the number of crocs likely in a x mile radius of a beach. Return an array [location, number]
         number=0
         return number
             
 
-    def locateOptimalBlockage(self,a,b):
-    # return the point blocked eg A1 and the increase in protection provided using another weighting
+    def locateOptimalBlockage(self,a,b): #Eric
+    # return the point blocked eg A1 and the increase in protection provided using some weighting
         point="A1"
         protection=1
         return point, protection
 
-    def minTime(self,a,b):
-    #return array of points trevelled and the time required
+    def minTime(self,a,b): #Eric
+    #return list of points trevelled and the time required
         path=[]
         return path
 
 if __name__ == '__main__':
    
     cm=CrocMonitor(size) 
-    #print (cm.locationList)
+    print (cm.locationList[0])
     
     
     
     print(cm.locateOptimalBlockage("15","18"))
     #return 17 as other points have alternatives to bypass 
     cm.computeCosting("15","18")
-    # minimal path is  [15,17,18] so return length of this as unit cost
+    # exhaustive path is  [15,16, 17,16, 18] so return length of this as unit cost - note data changes in Locations.csv
 
     cm.locateOptimalBlockage("15", "18")
-    #returns 17 as other routes have alternative paths
+    #returns 16 as other routes have alternative paths
     #may use other data to decide optimum path, but explain in requirements for this method

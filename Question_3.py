@@ -50,8 +50,11 @@ class CrocMonitor:
                 self.locationList[0] = [Croc_sightings, x, y,num_season, neighbours, Water_land_route ]
         f.close()
 
-if __name__ == '__main__':
-    locationList[0]
+print("CrocMonitor.locationList[0]", CrocMonitor.locationList[0])
+
+
+# if __name__ == '__main__':
+#     locationList[0]
     
     # def computeDistance (self, a, b):
     #     # provide the distance between two points a and b on the paths. They may not be adjacent
