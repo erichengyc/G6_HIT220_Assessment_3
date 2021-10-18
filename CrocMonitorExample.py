@@ -80,6 +80,7 @@ class CrocMonitor:
        
         # provide the distance between two points a and b on a path. Assume adjacent
         distance=0
+        distance = math.sqrt((a[1]-b[1])**2 + (a[2]-b[2])**2)
         return distance
 
     def computeCosting(self, a, b): #Kevin
