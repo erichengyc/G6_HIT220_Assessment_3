@@ -90,3 +90,6 @@ print("CrocMonitor.locationList[0]", CrocMonitor.locationList[0])
 
 # References:
 # CSV Column To Python List - https://youtu.be/4mqyi8Vqk78
+
+#to find min time with dijkstra
+# https://stackoverflow.com/questions/11835883/how-to-calculate-minimum-time-of-travel-between-two-places-when-a-matrix-contain
