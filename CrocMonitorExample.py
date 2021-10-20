@@ -44,23 +44,18 @@ class CrocMonitor:
     def storeDistance(self):
     
         for index in range(0, len(self.locationList)-1):
-   
+
             if self.locationList[index][4]!="":
-                startpoint = self.locationList[index][0]
-                endpoint = self.locationList[index][4]
-           
-                for indexa in range (0, len(self.points)-1):
-                    if self.points[indexa] == startpoint:
-                        indexPointa=indexa
+                startpoint = self.locationList[index]
+                endpoint = None
+                for location in self.locationList:
+                    
+                    if location[0] == startpoint[4]:
+                        endpoint = location
                 
-                        for indexb in range(0, len(self.points)-1):
-                            if self.points[indexb] == endpoint:
-                                indexPointb = indexb
-                              
-                                distance = self.computeDistance(startpoint, endpoint)
-                           #store distance along path    
-                                break
-                        break
+                distance = self.computeDistance(startpoint, endpoint)
+                self.locationList[index].append(distance)
+        return
    
       
 
@@ -81,7 +76,18 @@ class CrocMonitor:
        
         # provide the distance between two points a and b on a path. Assume adjacent
         distance=0
-        distance = math.sqrt((int(a[1])-int(b[1]))**2 + (int(a[2])-int(b[2]))**2)
+        xA = 0
+        xB = 0
+        yA = 0
+        yB = 0
+        for location in self.locationList:
+            if location[0] == a:
+                xA = location[1]
+                yA = location[2]
+            if location[0] == b:
+                xB = location[1]
+                yB = location[2]
+        distance = math.sqrt((int(xA)-int(xB))**2 + (int(yA)-int(yB))**2)
         return distance
 
     def computeCosting(self, a, b): #Kevin
