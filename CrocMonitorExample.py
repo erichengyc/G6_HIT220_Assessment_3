@@ -117,6 +117,17 @@ class CrocMonitor:
     def minTime(self,a,b): #Eric
     #return list of points trevelled and the time required
         path=[]
+        xA = 0
+        xB = 0
+        yA = 0
+        yB = 0
+        for location in self.locationList:
+            if location[0] == a:
+                xA = location[1]
+                yA = location[2]
+            if location[0] == b:
+                xB = location[1]
+                yB = location[2]
         return path
 
 if __name__ == '__main__':
