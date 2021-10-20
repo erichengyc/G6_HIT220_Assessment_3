@@ -2,6 +2,7 @@ from typing import Sized
 import csv
 import math
 import numpy as np
+import heapq
 
 size=100
 class CrocMonitor:
