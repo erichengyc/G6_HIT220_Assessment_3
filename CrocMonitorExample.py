@@ -43,17 +43,17 @@ class CrocMonitor:
 
     def storeDistance(self):
     
+        # Iterates through the location list and get the index at each location
         for index in range(0, len(self.locationList)-1):
-
+            # Check if the neighbor column is null at current location row
             if self.locationList[index][4]!="":
-                startpoint = self.locationList[index]
-                endpoint = None
-                for location in self.locationList:
-                    
-                    if location[0] == startpoint[4]:
-                        endpoint = location
-                
-                distance = self.computeDistance(startpoint[0], endpoint[0])
+                # If not null, assign the current location to be the start point of the edge
+                startpoint = self.locationList[index][0]
+                # Assign the neighbor of the start point to be the end point
+                endpoint = self.locationList[index][4]   
+                # Calculate the distance between the start and end points   
+                distance = self.computeDistance(startpoint, endpoint)
+                # Append the distance to the last column of the location row
                 self.locationList[index].append(distance)
         return
    
@@ -74,12 +74,15 @@ class CrocMonitor:
 
     def computeDistance (self, a, b):
        
-        # provide the distance between two points a and b on a path. Assume adjacent
+       # provide the distance between two points a and b on a path. Assume adjacent
+        
+        # Initialize the distance and the x, y coordinates of location a and b
         distance=0
         xA = 0
         xB = 0
         yA = 0
         yB = 0
+        # Find x, y coordinates of location a and b
         for location in self.locationList:
             if location[0] == a:
                 xA = location[1]
@@ -87,6 +90,7 @@ class CrocMonitor:
             if location[0] == b:
                 xB = location[1]
                 yB = location[2]
+        # Calculate the distance between location a and b      
         distance = math.sqrt((int(xA)-int(xB))**2 + (int(yA)-int(yB))**2)
         return distance
 
