@@ -53,7 +53,7 @@ class CrocMonitor:
                     if location[0] == startpoint[4]:
                         endpoint = location
                 
-                distance = self.computeDistance(startpoint, endpoint)
+                distance = self.computeDistance(startpoint[0], endpoint[0])
                 self.locationList[index].append(distance)
         return
    
