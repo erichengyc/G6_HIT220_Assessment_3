@@ -60,11 +60,20 @@ class CrocMonitor:
                 self.locationList[index].append(distance)
         return
 
-    def computePathDistance(self, path):
+    def computePathDistance(self, selected_map):
 
         # provide the distance between two points a and b, as the end points on a path. Assume not adjacent
-        distance = 0
-        return distance
+        total_distance = 0
+        current_point = selected_map[0]
+        for next_point in selected_map[1:]:
+            current_distance = self.computeDistance(
+                current_point[0], current_point[1],
+                next_point[0], next_point[1]
+            )
+            print(current_point, 'to', next_point, '=', current_distance)
+            total_distance += current_distance
+            current_point = next_point
+        return total_distance
 
 
     def addEdge(self, u, v):
