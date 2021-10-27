@@ -1,12 +1,12 @@
 from typing import Sized
 import csv
+
 import math
 import numpy as np
-import heapq   
-
 size=100
 class CrocMonitor:
     locationList =[]
+    import csv
     def __init__(self, size):
         
         self.locationList = []
@@ -32,7 +32,7 @@ class CrocMonitor:
                 if line[5] == "W":
                     water=True
 
-                self.locationList.append( [pointName,  x, y, number, edge, water] ) # etc
+                self.locationList .append( [pointName,  x, y, number, edge, water] ) # etc
                 
                 if not pointName in self.points:
                    
@@ -63,6 +63,7 @@ class CrocMonitor:
                         break
    
       
+    
 
     def computePathDistance (self,path):
        
@@ -78,105 +79,80 @@ class CrocMonitor:
         
 
     def computeDistance (self, a, b):
-       
+        
         # provide the distance between two points a and b on a path. Assume adjacent
         distance=0
-        distance = math.sqrt((int(a[1])-int(b[1]))**2 + (int(a[2])-int(b[2]))**2)
         return distance
 
-    def computeCosting(self, a, b): #Kevin
+    def computeCosting(self, a, b):
     # unit costs for scanning all points on all paths between two locations and give exhaustive path for rangers to follow, returned as an list
         path=[]
         costing=0
         return costing,path
     
-    def improveDistance (self, a, b): #Melisha
+    def improveDistance (self, a, b):
     #return point blocked as a value on map (eg A1) and scaled increase in distance between points
         point="A1"
         scaledImprovement=0
         return point, scaledImprovement
 
-    def countCroc(self, beach, x): #Eric 
+    def countCroc(self, beach, x):
     #count the number of crocs likely in a x mile radius of a beach. Return an array [location, number]
         number=0
         return number
             
 
-    def locateOptimalBlockage(self,a,b): #Eric
+    def locateOptimalBlockage(self,a,b):
     # return the point blocked eg A1 and the increase in protection provided using some weighting
         point="A1"
         protection=1
         return point, protection
 
-    def shortestPath(self, a, b):
-        xA = 0
-        xB = 0
-        yA = 0
-        yB = 0
-        # Find x, y coordinates of location a and bx`
-        for location in self.locationList:
-            if location[0] == a:
-                xA = location[1]
-                yA = location[2]
-            if location[0] == b:
-                xB = location[1]
-                yB = location[2]
-        #dx is total horizontal distance to be covered
-        dx = abs(a[xA] - b[xB])
-        #dy is total vertical distance to be covered
-        dy = abs(a[yA] - b[yB])
-        #return maximum of these two
-        return max(dx, dy)
-
-    def minTime(self,a,b): #Eric
+    def minTime(self,a,b):
     #return list of points trevelled and the time required
         path=[]
-        stepCount = 0
-        #finding steps for each consecutive point the sequence
-        for i in range(0, len(self.locationList)-1):
-             stepCount += self.shortestPath(a[i],a[i + 1])
-             path.append(stepCount)
         return path
+        
 
+    def findScope(self, a, b):
+        #provide start and end point of search, collect points to consider in search
+        pointList=[a,b]
+          
+        #find location of a and b in points list
+        for index in range(0, size-1):
+            if self.points[index ]== a:
+                indexa=index
+            if self.points[index] == b:
+                indexb = index 
+        #Find all paths a to b - Select direct routes only, no cycles or backtracking
+
+        #Find shortest route from path options 
+
+        # Add side points to inspect
+        #include all nodes that are linked to (neighbour of) any internal point on path (ie point crocodiles can enter)  
+        #       between a and b - this may add backtracking
+        
+        #Example findScope ("15","18")
+            #paths are [15,16,18] and [15,16,17,19,20]
+            #shortest path [15,16,18]
+            #add neighbours [15,16,17,18]
+        
+        #This is the exhaustive list of points rangers need to inspect
+        return pointList
 
 if __name__ == '__main__':
    
     cm=CrocMonitor(size) 
-    # print (cm.locationList)
-
-    for i in range(0,len(cm.locationList)):
-        print(cm.locationList[i])
-        
-    
-    
-    # print(cm.locateOptimalBlockage("15","18"))
-    #return 17 as other points have alternatives to bypass 
+    #print (cm.locationList)
+    #Changed examples
     cm.computeCosting("15","18")
-    # exhaustive path is  [15,16, 17,16, 18] so return length of this as unit cost - note data changes in Locations.csv
-
+  
+    # exhaustive path is  [15,16, 17,16, 18] so return the length of this as unit cost - note data changes in Locations.csv
+    #algorithm to find scope of spanning tree is provided as findScope()
+    cm.improveDistance("15","18")
+    #output will be 16  Ratio is "original distance on [15,16,18]:0"
     cm.locateOptimalBlockage("15", "18")
     #returns 16 as other routes have alternative paths
     #may use other data to decide optimum path, but explain in requirements for this method
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# References:
-# CSV Column To Python List - https://youtu.be/4mqyi8Vqk78
-
-#to find min time with dijkstra
-# https://stackoverflow.com/questions/11835883/how-to-calculate-minimum-time-of-travel-between-two-places-when-a-matrix-contain
-
-# count the number of point lie inside a circle
-# https://www.geeksforgeeks.org/queries-count-point-lie-inside-circle/?ref=lbp
+    cm.minTime("15", "18") 
+    #returns [15,16,18] and time to travel that path
