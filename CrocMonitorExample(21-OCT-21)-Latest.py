@@ -64,16 +64,17 @@ class CrocMonitor:
 
         # provide the distance between two points a and b, as the end points on a path. Assume not adjacent
         total_distance = 0
-        current_point = selected_map[0]
-        for next_point in selected_map[1:]:
-            current_distance = self.computeDistance(
-                current_point[0], current_point[1],
-                next_point[0], next_point[1]
-            )
-            print(current_point, 'to', next_point, '=', current_distance)
-            total_distance += current_distance
-            current_point = next_point
-        return total_distance
+        for x in range(len(cm.locationList)):
+            current_point = selected_map[str(self.locationList[x][0])]
+            for next_point in selected_map[str(self.locationList[x][4])]:
+                current_distance = self.computeDistance(
+                    current_point[str(self.locationList[x][0])], current_point[str(self.locationList[x][4])],
+                    next_point[str(self.locationList[x][0])], next_point[str(self.locationList[x][4])]
+                )
+                print(current_point, 'to', next_point, '=', current_distance)
+                total_distance += current_distance
+                current_point = next_point
+            return total_distance
 
 
     def addEdge(self, u, v):
@@ -187,10 +188,10 @@ class CrocMonitor:
         # for i in (path):
         #     for j in i:
         #         print(j)
-        for x in range(len(self.locationList)):
-            node = str(self.locationList[x][0])
+        # for x in range(len(self.locationList)):
+        #     node = str(self.locationList[x][0])
             
-            neigbhor = str(self.locationList[x][4])
+        #     neigbhor = str(self.locationList[x][4])
 
         for eachPath in path:
             for node in range(len(eachPath)):
@@ -242,6 +243,11 @@ if __name__ == '__main__':
 
     # Changed examples
     cm.computeCosting("15", "18")
+
+    selected_map = ["1", "10a"]
+    distance = cm.computePathDistance(selected_map)
+
+    print ('Total Distance =', distance)
 
     # exhaustive path is  [15,16, 17,16, 18] so return the length of this as unit cost - note data changes in Locations.csv
     # algorithm to find scope of spanning tree is provided as findScope()
