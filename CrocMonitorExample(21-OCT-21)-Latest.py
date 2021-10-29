@@ -2,7 +2,6 @@ from typing import Sized
 import csv
 import math
 from collections import defaultdict, deque
-import sys
 
 # import numpy as np
 size = 100
@@ -60,21 +59,16 @@ class CrocMonitor:
                 self.locationList[index].append(distance)
         return
 
-    def computePathDistance(self, selected_map):
+    def computePathDistance(self, path):
 
         # provide the distance between two points a and b, as the end points on a path. Assume not adjacent
-        total_distance = 0
-        for x in range(len(cm.locationList)):
-            current_point = selected_map[str(self.locationList[x][0])]
-            for next_point in selected_map[str(self.locationList[x][4])]:
-                current_distance = self.computeDistance(
-                    current_point[str(self.locationList[x][0])], current_point[str(self.locationList[x][4])],
-                    next_point[str(self.locationList[x][0])], next_point[str(self.locationList[x][4])]
-                )
-                print(current_point, 'to', next_point, '=', current_distance)
-                total_distance += current_distance
-                current_point = next_point
-            return total_distance
+        distance = 0
+        for node in range(len(path)):
+            try:
+                distance += self.computeDistance(path[node], path[node+1])
+            except:
+                pass
+        return distance
 
 
     def addEdge(self, u, v):
@@ -122,18 +116,18 @@ class CrocMonitor:
         return allPath
 
     def getPath(self, a, b):
-        # uniNode = set()
-        # for i in range(len(cm.locationList)):
-        #     uniNode.add(cm.locationList[i][0])
+        uniNode = set()
+        for i in range(len(cm.locationList)):
+            uniNode.add(cm.locationList[i][0])
 
         # g = Graph(len(uniNode))
 
         for x in range(len(cm.locationList)):
             self.addEdge(str(cm.locationList[x][0]), str(cm.locationList[x][4]))
 
-        path = self.findpaths(self.graph, a, b)
+        return self.findpaths(self.graph, a, b)
 
-        return path
+
 
 
     def computeDistance(self, a, b):
@@ -184,27 +178,11 @@ class CrocMonitor:
     def minTime(self, a, b):
         # return list of points trevelled and the time required
         path = self.getPath(a, b)
-        print(path)
-        # for i in (path):
-        #     for j in i:
-        #         print(j)
-        # for x in range(len(self.locationList)):
-        #     node = str(self.locationList[x][0])
-            
-        #     neigbhor = str(self.locationList[x][4])
 
         for eachPath in path:
-            for node in range(len(eachPath)):
-                try:
-                    neigbhor = eachPath[node+1]
-                except:
-                    # neigbhor = ""
-                    pass
-                print(eachPath[node], neigbhor)
+            distance = self.computePathDistance(eachPath)
+            print(distance)
 
-        # for i in range(len(path)):
-        #     print(path[i])
-        # return path
 
     def findScope(self, a, b):
         # provide start and end point of search, collect points to consider in search
@@ -243,11 +221,6 @@ if __name__ == '__main__':
 
     # Changed examples
     cm.computeCosting("15", "18")
-
-    selected_map = ["1", "10a"]
-    distance = cm.computePathDistance(selected_map)
-
-    print ('Total Distance =', distance)
 
     # exhaustive path is  [15,16, 17,16, 18] so return the length of this as unit cost - note data changes in Locations.csv
     # algorithm to find scope of spanning tree is provided as findScope()
