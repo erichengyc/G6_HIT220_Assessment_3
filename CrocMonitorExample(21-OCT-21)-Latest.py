@@ -176,13 +176,17 @@ class CrocMonitor:
         return point, protection
 
     def minTime(self, a, b):
+        distance_list = []
         # return list of points trevelled and the time required
         path = self.getPath(a, b)
         print(path)
 
         for eachPath in path:
             distance = self.computePathDistance(eachPath)
-            print(distance)
+            distance_list.append(distance)
+            # print(distance)
+        print(min(distance_list))
+
 
 
     def findScope(self, a, b):
