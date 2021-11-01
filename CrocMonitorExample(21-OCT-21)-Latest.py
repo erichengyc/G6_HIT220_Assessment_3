@@ -116,8 +116,16 @@ class CrocMonitor:
 
         return self.findpaths(self.graph, a, b)
 
+    def computePathDistance(self, path):
 
-
+        # provide the distance between two points a and b, as the end points on a path. Assume not adjacent
+        distance = 0
+        for node in range(len(path)):
+            try:
+                distance += self.computeDistance(path[node], path[node+1])
+            except:
+                pass
+        return distance
 
     def computeDistance(self, a, b):
 
