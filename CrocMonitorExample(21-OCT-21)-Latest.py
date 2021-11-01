@@ -59,17 +59,6 @@ class CrocMonitor:
                 self.locationList[index].append(distance)
         return
 
-    def computePathDistance(self, path):
-
-        # provide the distance between two points a and b, as the end points on a path. Assume not adjacent
-        distance = 0
-        for node in range(len(path)):
-            try:
-                distance += self.computeDistance(path[node], path[node+1])
-            except:
-                pass
-        return distance
-
 
     def addEdge(self, u, v):
         self.graph[u].append(v)
@@ -176,17 +165,39 @@ class CrocMonitor:
         return point, protection
 
     def minTime(self, a, b):
-        distance_list = []
         # return list of points trevelled and the time required
-        path = self.getPath(a, b)
-        print(path)
+        paths = self.getPath(a, b)
+        print(paths)
 
-        for eachPath in path:
-            distance = self.computePathDistance(eachPath)
-            distance_list.append(distance)
-            # print(distance)
-        print(min(distance_list))
+        min_time = 0
+        min_path = []
 
+        for path in paths:
+            index = paths.index(path)
+            pathTime = 0 
+            for node in range(len(path)):
+                try:
+                    distance = self.computeDistance(path[node], path[node+1])
+                    # not a good way to loop in this case, very slow
+                    for location in self.locationList:
+                        if location[0] == path[node]:
+                            if location[4] == path[node+1]:
+                                if location[5] is True:
+                                    pathTime += distance / 16
+                                elif location[5] is False:
+                                    pathTime += distance / 6
+                except:
+                    pass
+
+            if index == 0:
+                min_time = pathTime
+                min_path = path
+            else:
+                if pathTime < min_time:
+                    min_time = pathTime
+                    min_path = path
+
+        print(min_time, min_path)
 
 
     def findScope(self, a, b):
