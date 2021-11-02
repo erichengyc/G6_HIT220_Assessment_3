@@ -334,7 +334,7 @@ if __name__ == '__main__':
     # output will be 16  Ratio is "original distance on [15,16,18]:0"
     cm.locateOptimalBlockage("15", "18")
 
-    print(cm.countCroc("B5", 15))
+    cm.countCroc("B5", 15)
     # returns 16 as other routes have alternative paths
     # may use other data to decide optimum path, but explain in requirements for this method
     cm.minTime("1", "10a")
