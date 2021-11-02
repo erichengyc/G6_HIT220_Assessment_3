@@ -61,7 +61,7 @@ class CrocMonitor:
 
 
     def addEdge(self, u, v):
-        self.graph[u].append(v)
+        self.graph[u].append(v)     #add the edges between start point and end point
 
     # Utility function to check if current
     # vertex is already present in path
@@ -105,23 +105,23 @@ class CrocMonitor:
         return allPath
 
     def getPath(self, a, b):
-        uniNode = set()
-        for i in range(len(cm.locationList)):
-            uniNode.add(cm.locationList[i][0])
+        uniNode = set()  #create set of unique Node 
+        for i in range(len(cm.locationList)): 
+            uniNode.add(cm.locationList[i][0])  #add in the unique node in the uniNode 
 
         # g = Graph(len(uniNode))
 
         for x in range(len(cm.locationList)):
-            self.addEdge(str(cm.locationList[x][0]), str(cm.locationList[x][4]))
+            self.addEdge(str(cm.locationList[x][0]), str(cm.locationList[x][4]))        #call the addEdge function
 
-        return self.findpaths(self.graph, a, b)
+        return self.findpaths(self.graph, a, b)     #return to find path function 
 
     def computePathDistance(self, path):
 
         # provide the distance between two points a and b, as the end points on a path. Assume not adjacent
-        distance = 0
-        for node in range(len(path)):
-            try:
+        distance = 0        #initial distance as 0
+        for node in range(len(path)):  
+            try:            #calculate the compute distance from start point to destination point
                 distance += self.computeDistance(path[node], path[node+1])
             except:
                 pass
@@ -236,36 +236,35 @@ class CrocMonitor:
 
     def minTime(self, a, b):
         # return list of points trevelled and the time required
-        paths = self.getPath(a, b)
+        paths = self.getPath(a, b)      #get the all the possible paths
         print(paths)
 
-        min_time = 0
-        min_path = []
+        min_time = 0        #initial minimum time
+        min_path = []       #initial minimum path list
 
-        for path in paths:
-            index = paths.index(path)
-            pathTime = 0 
+        for path in paths: 
+            index = paths.index(path)   #returns the index path
+            pathTime = 0    
             for node in range(len(path)):
                 try:
-                    distance = self.computeDistance(path[node], path[node+1])
-                    # not a good way to loop in this case, very slow
+                    distance = self.computeDistance(path[node], path[node+1])   #calculate the start point to destination point
                     for location in self.locationList:
-                        if location[0] == path[node]:
-                            if location[4] == path[node+1]:
-                                if location[5] is True:
-                                    pathTime += distance / 16
-                                elif location[5] is False:
-                                    pathTime += distance / 6
+                        if location[0] == path[node]:       #if crocs sight equal to node
+                            if location[4] == path[node+1]:     #if neighbor is the destination point 
+                                if location[5] is True:         #if route is water 
+                                    pathTime += distance / 16   #find the speed when it's in water
+                                elif location[5] is False:      #elif route is land
+                                    pathTime += distance / 6    #fidn the speed when it's on land
                 except:
                     pass
 
-            if index == 0:
-                min_time = pathTime
-                min_path = path
-            else:
-                if pathTime < min_time:
-                    min_time = pathTime
-                    min_path = path
+            if index == 0:     
+                min_time = pathTime  #min time equal path time
+                min_path = path     #min path equal to path
+            else:               #this is to get the mininum time from start point to destination
+                if pathTime < min_time:     #if path Time is smaller than min time
+                    min_time = pathTime     #min time equal to path 
+                    min_path = path         #min path equal to path
 
         print(min_time, min_path)
 
