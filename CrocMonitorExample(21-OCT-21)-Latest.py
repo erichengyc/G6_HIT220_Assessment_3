@@ -188,7 +188,7 @@ class CrocMonitor:
         #Below explains how the optimum point to be blocked was decided and how the crocadile blocking situation was assumed
         #The point that will be blocked is the first neighbouring point for the source point 
         # on the shortest path since this is the optimum place to block the croc on the shortest path
-        #Fr example is the cros were to go from "1" to "10a", the shortest path will be ['1', '2', '3', '4', '5', '6', '7', '9', '10a'] and 
+        #For example is the cros were to go from "1" to "10a", the shortest path will be ['1', '2', '3', '4', '5', '6', '7', '9', '10a'] and 
         # the point blocked will be 2, because the first point croc travels from 1(source) is 2. So if that is blocked then 
         # the croc cannot travel travel any further on that shortest path and would have to take the second shortest path from '1' to '10a'.
         # So the seond shortest path is the new alternative distance.
