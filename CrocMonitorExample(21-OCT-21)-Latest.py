@@ -155,11 +155,73 @@ class CrocMonitor:
         costing = 0
         return costing, path
 
+    #below function addresses the answer to question number 2
     def improveDistance(self, a, b):
-        # return point blocked as a value on map (eg A1) and scaled increase in distance between points
-        point = "A1"
-        scaledImprovement = 0
-        return point, scaledImprovement
+        # this function returns point blocked as a value on map (eg A1) and scaled increase in distance between points
+        path_distance = 0
+        path_distance_sets = []
+        distance_list = []
+
+        #find all possible paths
+        all_paths = self.getPath(a,b)
+        
+        #calculate distances in all possible paths and store in path_distance list to map which pat has
+        #  the shortest and second shortest distance in coming steps
+        for each_path in all_paths:
+            path_distance = self.computePathDistance(each_path)
+
+            path_distance_sets.append([each_path, path_distance])
+            path_distance = 0
+
+        #using the path_distance list get all the distances in a seperate list to find the shortest distance
+        for each_path_distance_set in path_distance_sets:
+            distance_list.append(each_path_distance_set[1])
+
+        #find the shortest distance using distance_list
+        shortest_distance = min(distance_list)
+
+        #find shortest path using the shortest distance calculated above
+        for each_path_distance_set in path_distance_sets:
+            if each_path_distance_set[1] == shortest_distance:
+                shortest_path = each_path_distance_set[0]
+
+        #Below explains how the optimum point to be blocked was decided and how the crocadile blocking situation was assumed
+        #The point that will be blocked is the first neighbouring point for the source point 
+        # on the shortest path since this is the optimum place to block the croc on the shortest path
+        #Fr example is the cros were to go from "1" to "10a", the shortest path will be ['1', '2', '3', '4', '5', '6', '7', '9', '10a'] and 
+        # the point blocked will be 2, because the first point croc travels from 1(source) is 2. So if that is blocked then 
+        # the croc cannot travel travel any further on that shortest path and would have to take the second shortest path from '1' to '10a'.
+        # So the seond shortest path is the new alternative distance.
+
+        #Above logic is achieved from the below coding section and the shortest path calculated above
+
+        #get the blocked point
+        blocked_point = shortest_path[1] #as per the above explanation the optimum blocked point is the first point croc will go to from the source point
+        if len(path_distance_sets) != 1:
+            #calculate new alternative distance
+            distance_list.remove(shortest_distance)
+            second_shortest_distance = min(distance_list)
+
+            #find second shortest path using the second shortest distance calculated above
+            for each_path_distance_set in path_distance_sets:
+                if each_path_distance_set[1] == second_shortest_distance:
+                    new_alternative_path = each_path_distance_set[0]
+
+            ratio_of_improvement = shortest_distance/second_shortest_distance
+            print("Blocked point is:", blocked_point)
+            print("Ratio is", shortest_distance, ":", second_shortest_distance,".","The ratio in float is", ratio_of_improvement)
+        else:
+            #There is no alternative path because there is only 1 possible path. So the croc has no other way of going to 
+            # the destination when the shortest path which is the only path is blocked at the optimum point.
+            second_shortest_distance = 0
+
+            #The ratio_of_improvement is shortest_distance:0 because there is no alternative path.
+            #but a integer/float cannot be devided by 0 due to zero devision error and any number deivded by 0 is undefined but a very large number. 
+            #So the ratio of improvement in this case is veery large. This explains the practical thinking as well since when there is only one path 
+            # and that path is blocked then there is no way for croc to travel which makes a hich improvement
+            
+            print("Blocked point is:", blocked_point)
+            print("There is no alternative path since the only posible path is the shortest path. So the ratio is %d:0. Ratio in float cannot be calculated because any number devided by 0 is undefined. But the ratio of improvement is very large since the denominator is 0." %shortest_distance )
 
     def countCroc(self, beach, x):
         # count the number of crocs likely in a x mile radius of a beach. Return an array [location, number]
