@@ -224,9 +224,30 @@ class CrocMonitor:
             print("There is no alternative path since the only posible path is the shortest path. So the ratio is %d:0. Ratio in float cannot be calculated because any number devided by 0 is undefined. But the ratio of improvement is very large since the denominator is 0." %shortest_distance )
 
     def countCroc(self, beach, x):
-        # count the number of crocs likely in a x mile radius of a beach. Return an array [location, number]
-        number = 0
-        return number
+    #count the number of crocs likely in a x mile radius of a beach. Return an array [location, number]
+        #it assumed that distance for this function 
+        #locate all crocs in radius of beach and add to list
+        #find path from beach to all crocs in list
+        #find neighbour in path list, block this point
+
+        num=0    #number of crocs 
+        beachToCrocs = [] 
+        for croc in self.points:
+            if not "B" in croc and not "A" in croc and not "a" in croc:     #if the 
+                if cm.computeDistance(beach, croc)[0] <= x:     #if computeDistance smaller than 0
+                    beachToCrocs            
+                    num += str(self.locationList[int(croc)][3]) #
+
+        #go through locationList & find closest neighbour to beach - block this point
+        minDistance = 1000
+        blocked = ''
+        for location in self.locationList:
+            if location[4] == beach:       #if neighbor is equal to beach 
+                if location[5] < minDistance:   #if neighbor is smaller than 1000
+                    minDistance = location[5]   #then set minDistance in route
+                    blocked = location[0]       #blocked set it to crocs sight
+
+        return num,blocked
 
     def locateOptimalBlockage(self, a, b):
         # return the point blocked eg A1 and the increase in protection provided using some weighting
@@ -312,6 +333,8 @@ if __name__ == '__main__':
     cm.improveDistance("15", "18")
     # output will be 16  Ratio is "original distance on [15,16,18]:0"
     cm.locateOptimalBlockage("15", "18")
+
+    print(cm.countCroc("B5", 15))
     # returns 16 as other routes have alternative paths
     # may use other data to decide optimum path, but explain in requirements for this method
     cm.minTime("1", "10a")
