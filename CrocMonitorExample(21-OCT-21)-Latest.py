@@ -127,6 +127,27 @@ class CrocMonitor:
                 pass
         return distance
 
+    
+    def addBilateralRelationship (self):
+        # Add bilateral Neighbour relationship
+        # For example, there is a record (17 with neighbour 20) in the original data file
+        # The function add a new record (20 with neighbour 17)
+        bilateralLocationList = []
+        for location in self.locationList:  
+            bilateralLocationList.append(location) 
+        length = len(bilateralLocationList)
+        index = 0
+        for locationA in self.locationList:
+            if index > length - 1:
+                break
+            for locationB in self.locationList:
+                if locationA[4] == locationB[0]:
+                    bilateralLocationList.append([locationB[0], locationB[1], locationB[2], locationB[3],locationA[0],locationB[5]])
+                    break
+            index += 1  
+           
+        return bilateralLocationList 
+    
     def computeDistance(self, a, b):
 
         # provide the distance between two points a and b on a path. Assume adjacent
