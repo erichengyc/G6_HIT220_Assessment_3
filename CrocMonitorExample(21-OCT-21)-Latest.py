@@ -1,7 +1,10 @@
+from os import pathsep
+from posix import ST_APPEND
 from typing import Sized
 import csv
 import math
 from collections import defaultdict, deque
+import numpy as np
 
 # import numpy as np
 size = 100
@@ -106,13 +109,13 @@ class CrocMonitor:
 
     def getPath(self, a, b):
         uniNode = set()  #create set of unique Node 
-        for i in range(len(cm.locationList)): 
-            uniNode.add(cm.locationList[i][0])  #add in the unique node in the uniNode 
+        for i in range(len(self.locationList)): 
+            uniNode.add(self.locationList[i][0])  #add in the unique node in the uniNode 
 
         # g = Graph(len(uniNode))
 
-        for x in range(len(cm.locationList)):
-            self.addEdge(str(cm.locationList[x][0]), str(cm.locationList[x][4]))        #call the addEdge function
+        for x in range(len(self.locationList)):
+            self.addEdge(str(self.locationList[x][0]), str(self.locationList[x][4]))        #call the addEdge function
 
         return self.findpaths(self.graph, a, b)     #return to find path function 
 
@@ -255,7 +258,7 @@ class CrocMonitor:
         beachToCrocs = [] 
         for croc in self.points:
             if not "B" in croc and not "A" in croc and not "a" in croc:     #if the 
-                if cm.computeDistance(beach, croc)[0] <= x:     #if computeDistance smaller than 0
+                if self.computeDistance(beach, croc)[0] <= x:     #if computeDistance smaller than 0
                     beachToCrocs            
                     num += str(self.locationList[int(croc)][3]) #
 
@@ -272,9 +275,33 @@ class CrocMonitor:
 
     def locateOptimalBlockage(self, a, b):
         # return the point blocked eg A1 and the increase in protection provided using some weighting
-        point = "A1"
-        protection = 1
-        return point, protection
+        # point = "A1"
+        # protection = 1
+        # return point, protection
+        paths=self.getPath
+        d1=1
+        d2=0
+        ratio = []
+        present_state = a
+        for path in paths:
+            index = paths.index(path)
+            for node in range(len(path)-1):
+                D=self.computeDistance
+                d1=d1+self.computeDistance[path[node], path[node+1]
+                self.computeDistance[path[node], path[node+1] = np.inf
+                self.path_history_new=[next_state]
+                while(present_state != b):
+                    next_state = np.argmin(D[present_state, :])
+                    self.path_history_new.append(next_state)
+                    present_state=next_state
+                for j in range(len(self.path_history_new)-1):
+                    d2=d2+self.computeDistance[self.path_history_new[i],self.path_history_new[i+1]]
+                ratio.append(d2/d1)
+            ratio_high = np.min(ratio)
+            edge_initial = argmax(ratio)
+            edge_final = edge_initial + 1
+            return [self.path[edge_initial], self.path[edge_final]], ratio_high
+    
 
     def minTime(self, a, b):
         # return list of points trevelled and the time required
