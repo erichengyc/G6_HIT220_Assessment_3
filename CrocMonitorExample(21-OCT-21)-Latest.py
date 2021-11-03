@@ -278,29 +278,20 @@ class CrocMonitor:
         # point = "A1"
         # protection = 1
         # return point, protection
-        paths=self.getPath
-        d1=1
-        d2=0
-        ratio = []
-        present_state = a
-        for path in paths:
-            index = paths.index(path)
-            for node in range(len(path)-1):
-                D=self.computeDistance
-                d1=d1+self.computeDistance[path[node], path[node+1]
-                self.computeDistance[path[node], path[node+1] = np.inf
-                self.path_history_new=[next_state]
-                while(present_state != b):
-                    next_state = np.argmin(D[present_state, :])
-                    self.path_history_new.append(next_state)
-                    present_state=next_state
-                for j in range(len(self.path_history_new)-1):
-                    d2=d2+self.computeDistance[self.path_history_new[i],self.path_history_new[i+1]]
-                ratio.append(d2/d1)
-            ratio_high = np.min(ratio)
-            edge_initial = argmax(ratio)
-            edge_final = edge_initial + 1
-            return [self.path[edge_initial], self.path[edge_final]], ratio_high
+        point="A1"
+        protection=1
+        path=self.getPath(a,b)      #get the path the possible path
+        newpath=[]
+        s1=a
+        for index in range(0, len(self.locationList)-1):
+            if self.locationList[index][0]==s1:
+                newpath.append(s1)  
+                s1=self.locationList[index][4]
+        for index in range(0, len(path)-1):
+            if path[index]!=newpath[index]:
+                point=path[index-1]
+                break
+        return point, protection
     
 
     def minTime(self, a, b):
