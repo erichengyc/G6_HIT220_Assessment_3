@@ -1,5 +1,5 @@
 from os import pathsep
-from posix import ST_APPEND
+
 from typing import Sized
 import csv
 import math
@@ -151,6 +151,170 @@ class CrocMonitor:
            
         return bilateralLocationList 
     
+    
+    
+    
+    def findScope(self, a, b):
+        
+        ### provide start and end point of search, collect points to consider in search
+    
+        pointList=[]
+        # Add bilateral Neighbour relationship to find all possible paths
+        # For example, there is a record (17 with neighbour 20) in the original data file
+        # The function add a new record (20 with neighbour 17)
+        bilateralLocationList = self.addBilateralRelationship()
+              
+        ### Find all paths a to b - Select direct routes only, no cycles or backtracking
+        
+        allPaths = []
+        graph = defaultdict(list)
+        uniNode = set()
+        
+        for i in range(len(bilateralLocationList)):
+            uniNode.add(bilateralLocationList[i][0])
+            
+        for x in range(len(bilateralLocationList)):
+            graph[str(bilateralLocationList[x][0])].append(bilateralLocationList[x][4])
+
+        allPaths = self.findpaths(graph, a, b)
+        print()
+        print()
+        print("Question 1 information: ")
+        print("allPaths: ", allPaths)
+        
+        
+        ##Find shortest route from path options 
+        shortestPath = []
+        shortestPathIndex = 0
+        pathDistances = []
+        # Get the distance of each path
+        for index in range(len(allPaths)):
+            pathDistance = self.computePathDistance(allPaths[index])
+            pathDistances.append(pathDistance)
+        
+        # Get the smallest distance and find the index of the distance 
+        # which is the same as the index where the shortest path is at   
+        for index in range(len(pathDistances)):
+            if pathDistances[index] == min(pathDistances):
+                shortestPathIndex = index
+                
+        # Get the shortest path
+        shortestPath = allPaths[shortestPathIndex]
+           
+        print('shortestPath: ', shortestPath)
+ 
+        ## Add side points to inspect
+        #include all nodes that are linked to (neighbour of) any internal point on path (ie point crocodiles can enter)  
+        #       between a and b - this may add backtracking
+
+
+        for point in shortestPath:
+            pointList.append(point)
+            
+        internalPointAndNeighbours = []
+        # Find the neighbours of internal points
+        for location in bilateralLocationList:
+            if location[0] in shortestPath[1:-1]:
+                internalPointAndNeighbours.append([location[0], location[4]])
+        # If the neighbour of an internal point is in any of the path options 
+        # insert the neigbour into the point list at one position after the point    
+        for internalPoint in internalPointAndNeighbours:
+            for path in allPaths:
+                if internalPoint[1] in path[1:-1] and internalPoint[1] not in pointList:
+                    pointList.insert(pointList.index(internalPoint[0]) + 1, internalPoint[1])    
+                  
+        #Example findScope ("15","18")
+            #paths are [15,16,18] and [15,16,17,19,20,18] 
+            #shortest path [15,16,18]
+            #add neighbours [15,16,17,18] (final result of the function)
+        
+        #This is the exhaustive list of points rangers need to inspect
+        return pointList
+    
+    
+    
+    # Function to find the subset of an given element
+    def getSubset(self, upper, i):
+       if upper[i] == i:
+            return i
+       return self.getSubset(upper, upper[i])
+
+    # Function to unify two subsets by rank
+    def unifySubsets(self, upper, rank, set1, set2):
+        set1root = self.getSubset(upper, set1)
+        set2root = self.getSubset(upper, set2)
+
+        # Put smaller rank tree under the root of high rank tree 
+        if rank[set1root] < rank[set2root]:
+            upper[set1root] = set2root
+        elif rank[set1root] > rank[set2root]:
+            upper[set2root] = set1root
+
+        # If ranks are same, then make one as root and increment its rank by one
+        else:
+            upper[set2root] = set1root
+            rank[set1root] += 1
+
+    
+    # Function to get the minimum spanning tree of a given graph
+    def getMST(self, graph, numberOfVertices):
+
+        
+        minimumSpanningTree = []  
+        
+        # The index variable is used to access the graph edges
+        indexa = 0
+
+        # An index variable for the result list
+        indexb = 0
+
+        # Sort all the edges based on their weight (distance) in non-decreasing order
+        graph = sorted(graph,
+                            key=lambda item: item[2])
+
+        upper = []
+        rank = []
+
+        # Create the number of vertices subsets
+        for node in range( numberOfVertices):
+            upper.append(node)
+            rank.append(0)
+
+        # The number of edges of a MST should be the 
+        # number of graph vertices - 1
+        while indexb <  numberOfVertices - 1:
+
+            # Pick the shortest edge and increment the index 
+            # by one for next iteration
+            u, v, w = graph[indexa]
+            indexa = indexa + 1
+            x = self.getSubset(upper, u)
+            y = self.getSubset(upper, v)
+
+            # If the edge does not form a cycle, add it as part of the final MST 
+            # otherwise the edge will be discarded 
+            if x != y:
+                indexb = indexb + 1
+                minimumSpanningTree.append([u, v, w])
+                self.unifySubsets(upper, rank, x, y)
+            
+        # The variable sotre the total weight (distance) of the final MST
+        minimumCost = 0
+        # Store all the vertices that the MST goes through
+        exhaustivePath = []
+        
+       
+        # Append all vertices went through and pring all edges with their distances
+        for u, v, weight in minimumSpanningTree:
+            minimumCost += weight
+            exhaustivePath.append(u)
+            exhaustivePath.append(v)
+           
+        return exhaustivePath,minimumCost
+    
+  
+    
+    
     def computeDistance(self, a, b):
 
         # provide the distance between two points a and b on a path. Assume adjacent
@@ -175,9 +339,43 @@ class CrocMonitor:
 
     def computeCosting(self, a, b):
         # unit costs for scanning all points on all paths between two locations and give exhaustive path for rangers to follow, returned as an list
-        path = []
+        exhaustivePath = []
         costing = 0
-        return costing, path
+        
+        pointList = []
+        numOfVertices = 0
+        graphEdges = []
+        
+        # Get the scope of the area betweem a and b
+        pointList = self.findScope(a, b)
+        print('pointList: ', pointList)
+        # Get the number of vertices in the area graph
+        numOfVertices = len(pointList)
+        
+        # Append graph edges     
+        for point in pointList:
+            for location in self.locationList:
+                if point == location[0] and location[4] in pointList:
+                    graphEdges.append([pointList.index(point), pointList.index(location[4]), location[6]])
+        
+        # Get the minimum spanning tree of the graph and the minimum weight (distance)
+        results = []
+        results = self.getMST(graphEdges, numOfVertices)
+        costing = results[1]
+       
+        # Convert the indexs into actual locations 
+        # and append them to the exhaustive path list
+        for pointIndex in results[0]:
+            exhaustivePath.append(pointList[pointIndex])
+         
+          
+        print("The exhaustive path between two locations is: ", exhaustivePath) 
+        # As the question states "cost is proportional to ground covered" 
+        # the weight (distance) of the minimum spanning tree is returned as the minimum cost
+        print("The minimum cost for performing an exhaustive search is: ", costing)  
+        print()
+        print()
+        return costing, exhaustivePath
 
     #below function is a part of question 2
     def getPathforImproveDistance(self, a, b):
@@ -326,6 +524,7 @@ class CrocMonitor:
         for i in beaches:
             a = i  #set it as a 
             for y in range(len(spot)):   #find the distance of each spot
+                
                 # to stop marking itself as a neighbour
                 if spot[y][0]!= i:          #if spot is not equal to i
                     b = spot[y][0]          #then set b as every spot in list
@@ -363,6 +562,7 @@ class CrocMonitor:
     
 
     def minTime(self, a, b):
+        print("Loop 2") 
         # return list of points trevelled and the time required
         paths = self.getPath(a, b)      #get the all the possible paths
         print(paths)
@@ -372,7 +572,8 @@ class CrocMonitor:
 
         for path in paths: 
             index = paths.index(path)   #returns the index path
-            pathTime = 0    
+            pathTime = 0   
+            print("Loop 2") 
             for node in range(len(path)):
                 try:
                     distance = self.computeDistance(path[node], path[node+1])   #calculate the start point to destination point
@@ -397,49 +598,28 @@ class CrocMonitor:
         print(min_time, min_path)
 
 
-    def findScope(self, a, b):
-        # provide start and end point of search, collect points to consider in search
-        pointList = [a, b]
-
-        # find location of a and b in points list
-        for index in range(0, size - 1):
-            if self.points[index] == a:
-                indexa = index
-            if self.points[index] == b:
-                indexb = index
-                # Find all paths a to b - Select direct routes only, no cycles or backtracking
-
-        # Find shortest route from path options
-
-        # Add side points to inspect
-        # include all nodes that are linked to (neighbour of) any internal point on path (ie point crocodiles can enter)
-        #       between a and b - this may add backtracking
-
-        # Example findScope ("15","18")
-        # paths are [15,16,18] and [15,16,17,19,20]
-        # shortest path [15,16,18]
-        # add neighbours [15,16,17,18]
-
-        # This is the exhaustive list of points rangers need to inspect
-        return pointList
+    
 
 
 if __name__ == '__main__':
 
     cm = CrocMonitor(size)
+    ### All functions are commented out, please run them individually when testing each question
 
-    # Changed examples
-    cm.computeCosting("15", "18")
-    
+    # Question 1
+    #cm.computeCosting("15", "18")
     # exhaustive path is  [15,16, 17,16, 18] so return the length of this as unit cost - note data changes in Locations.csv
+    
+    # Question 2
     # algorithm to find scope of spanning tree is provided as findScope()
-    print(cm.improveDistance("15", "18"))
+    #print(cm.improveDistance("15", "18"))
     # output will be 16  Ratio is "original distance on [15,16,18]:0"
     
-
-    print(cm.locateOptimalBlockage("15", "18"))
-    print(cm.countCroc("B5", 16))
+    # Question 3
+    #print(cm.locateOptimalBlockage("15", "18"))
+    #print(cm.countCroc("B5", 16))
+    
     # returns 16 as other routes have alternative paths
     # may use other data to decide optimum path, but explain in requirements for this method
-    print(cm.minTime("1", "10a"))
+    #print(cm.minTime("1", "10a"))
     # returns [15,16,18] and time to travel that path
