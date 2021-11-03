@@ -145,7 +145,7 @@ class CrocMonitor:
                 break
             for locationB in self.locationList:
                 if locationA[4] == locationB[0]:
-                    bilateralLocationList.append([locationB[0], locationB[1], locationB[2], locationB[3],locationA[0],locationB[5]])
+                    bilateralLocationList.append([locationB[0], locationB[1], locationB[2], locationB[3],locationA[0],locationB[5], locationA[6]])
                     break
             index += 1  
            
