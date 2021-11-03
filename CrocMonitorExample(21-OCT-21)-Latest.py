@@ -315,10 +315,6 @@ class CrocMonitor:
 
     def countCroc(self, beach, x):
     #count the number of crocs likely in a x mile radius of a beach. Return an array [location, number]
-        #it assumed that distance for this function 
-        #locate all crocs in radius of beach and add to list
-        #find path from beach to all crocs in list
-        #find neighbour in path list, block this point
 
         num=0
         beaches = {}
@@ -349,9 +345,7 @@ class CrocMonitor:
 
     def locateOptimalBlockage(self, a, b):
         # return the point blocked eg A1 and the increase in protection provided using some weighting
-        # point = "A1"
-        # protection = 1
-        # return point, protection
+
         point="A1"
         protection=1
         path=self.getPath(a,b)      #get the path the possible path
