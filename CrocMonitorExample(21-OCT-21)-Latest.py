@@ -339,7 +339,7 @@ class CrocMonitor:
                 if radius[i][2] < x:  #if the radius of beach is < input value
                     spotsinradius.append(radius[i][1])         #append the spot list with radius 
         num = len(spotsinradius)    #count the number of radius of beach 
-        return f'The number of crocs within {x}km of {beach} is {num}'
+        return f'The number of crocodiles within {x}km of {beach} is {num}'
 
         return num,blocked
 
