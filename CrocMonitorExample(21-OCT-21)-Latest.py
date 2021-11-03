@@ -254,22 +254,30 @@ class CrocMonitor:
         #find path from beach to all crocs in list
         #find neighbour in path list, block this point
 
-        num=0    #number of crocs 
-        beachToCrocs = [] 
-        for croc in self.points:
-            if not "B" in croc and not "A" in croc and not "a" in croc:     #if the 
-                if self.computeDistance(beach, croc)[0] <= x:     #if computeDistance smaller than 0
-                    beachToCrocs            
-                    num += str(self.locationList[int(croc)][3]) #
-
-        #go through locationList & find closest neighbour to beach - block this point
-        minDistance = 1000
-        blocked = ''
-        for location in self.locationList:
-            if location[4] == beach:       #if neighbor is equal to beach 
-                if location[5] < minDistance:   #if neighbor is smaller than 1000
-                    minDistance = location[5]   #then set minDistance in route
-                    blocked = location[0]       #blocked set it to crocs sight
+        num=0
+        beaches = {}
+        for x in range(len(self.locationList)):
+            if self.locationList[x][0][0] == 'B':
+                beaches[self.locationList[x][0]] = ([self.locationList[x][1],self.locationList[x][2]])  #ensure the node is equal to x and y axis 
+        radius = [] #initial empty list for radius to save total distance of spots
+        spot = self.locationList
+        for i in beaches:
+            a = i  #set it as a 
+            for y in range(len(spot)):   #find the distance of each spot
+                # to stop marking itself as a neighbour
+                if spot[y][0]!= i:          #if spot is not equal to i
+                    b = spot[y][0]          #then set b as every spot in list
+                    distance = self.computeDistance(a,b)
+                    radius.append([i,spot[y][0],distance])      #append the list of beach
+        x = int(x)
+        spotsinradius = []     #spots within radius of x
+        for i in range(len(radius)):
+            # if the iteration equals the beach user input
+            if radius[i][0] == beach:   #if the value is equal to input value
+                if radius[i][2] < x:  #if the radius of beach is < input value
+                    spotsinradius.append(radius[i][1])         #append the spot list with radius 
+        num = len(spotsinradius)    #count the number of radius of beach 
+        return f'The number of crocs within {x}km of {beach} is {num}'
 
         return num,blocked
 
@@ -281,17 +289,17 @@ class CrocMonitor:
         point="A1"
         protection=1
         path=self.getPath(a,b)      #get the path the possible path
-        newpath=[]
+        nextpath=[]
         s1=a
-        for index in range(0, len(self.locationList)-1):
-            if self.locationList[index][0]==s1:
-                newpath.append(s1)  
-                s1=self.locationList[index][4]
-        for index in range(0, len(path)-1):
-            if path[index]!=newpath[index]:
-                point=path[index-1]
-                break
-        return point, protection
+        for x in range(0, len(self.locationList)-1):    
+            if self.locationList[x][0]==s1:     #cros sighting is equal to a
+                nextpath.append(s1)              #create add it in the new path list
+                s1=self.locationList[x][4]      #s1 will euqal to neighbour
+        for x in range(0, len(path)-1):         
+            if path[x]!=nextpath[x]:         #if the path value is not equal to the new path value  
+                point=path[x-1]                 #point equal to step back 1 path value
+                break                               
+        return point, protection                    
     
 
     def minTime(self, a, b):
@@ -360,21 +368,23 @@ if __name__ == '__main__':
 
     cm = CrocMonitor(size)
     # print (cm.locationList)
-
+    
     for i in range(0, len(cm.locationList)):
         print(cm.locationList[i])
+    
 
     # Changed examples
     cm.computeCosting("15", "18")
-
+    
     # exhaustive path is  [15,16, 17,16, 18] so return the length of this as unit cost - note data changes in Locations.csv
     # algorithm to find scope of spanning tree is provided as findScope()
-    cm.improveDistance("15", "18")
+    print(cm.improveDistance("15", "18"))
     # output will be 16  Ratio is "original distance on [15,16,18]:0"
-    cm.locateOptimalBlockage("15", "18")
+    
 
-    cm.countCroc("B5", 15)
+    print(cm.locateOptimalBlockage("15", "18"))
+    print(cm.countCroc("B5", 16))
     # returns 16 as other routes have alternative paths
     # may use other data to decide optimum path, but explain in requirements for this method
-    cm.minTime("1", "10a")
+    print(cm.minTime("1", "10a"))
     # returns [15,16,18] and time to travel that path
