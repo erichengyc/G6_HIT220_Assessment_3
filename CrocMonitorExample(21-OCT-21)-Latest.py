@@ -179,25 +179,39 @@ class CrocMonitor:
         costing = 0
         return costing, path
 
+    #below function is a part of question 2
+    def getPathforImproveDistance(self, a, b):
+        bilateralLocationList = self.addBilateralRelationship()
+        uniNode = set()  #create set of unique Node 
+        for i in range(len(bilateralLocationList)): 
+            uniNode.add(bilateralLocationList[i][0])  #add in the unique node in the uniNode 
+
+        for x in range(len(bilateralLocationList)):
+            self.addEdge(str(self.addBilateralRelationship()[x][0]), str(self.addBilateralRelationship()[x][4]))        #call the addEdge function
+
+        return self.findpaths(self.graph, a, b)     #return to find path function
+
     #below function addresses the answer to question number 2
     def improveDistance(self, a, b):
         # this function returns point blocked as a value on map (eg A1) and scaled increase in distance between points
+        
+        #initialize variable
         path_distance = 0
-        path_distance_sets = []
-        distance_list = []
+        path_distance_sets = [] #used to store all possible paths between two points and their each path's distance 
+        distance_list = [] #this list is used to store all the path distances to find the shortest path
 
         #find all possible paths
-        all_paths = self.getPath(a,b)
+        all_paths = self.getPathforImproveDistance(a,b)
         
-        #calculate distances in all possible paths and store in path_distance list to map which pat has
-        #  the shortest and second shortest distance in coming steps
+        #Calculate distances in all possible paths and store in path_distance_sets list to map which each path's distance.
+        #path_distance_seets list will be used to get the shortest path using the shortest distance in coming steps
         for each_path in all_paths:
             path_distance = self.computePathDistance(each_path)
 
             path_distance_sets.append([each_path, path_distance])
             path_distance = 0
 
-        #using the path_distance list get all the distances in a seperate list to find the shortest distance
+        #get all the distances in a seperate list called 'distance_list' to find the shortest distance
         for each_path_distance_set in path_distance_sets:
             distance_list.append(each_path_distance_set[1])
 
@@ -210,39 +224,91 @@ class CrocMonitor:
                 shortest_path = each_path_distance_set[0]
 
         #Below explains how the optimum point to be blocked was decided and how the crocadile blocking situation was assumed
-        #The point that will be blocked is the first neighbouring point for the source point 
-        # on the shortest path since this is the optimum place to block the croc on the shortest path
+        #The point that will be blocked is the first neighbouring point for the source point on the shortest path, 
+        # since this is the optimum place to block the croc on the shortest path.
+
         #For example is the cros were to go from "1" to "10a", the shortest path will be ['1', '2', '3', '4', '5', '6', '7', '9', '10a'] and 
         # the point blocked will be 2, because the first point croc travels from 1(source) is 2. So if that is blocked then 
-        # the croc cannot travel travel any further on that shortest path and would have to take the second shortest path from '1' to '10a'.
-        # So the seond shortest path is the new alternative distance.
+        # the croc cannot travel any further on that shortest path and would have to take an alternative path. 
+        # So the point cros goes to from the source point in the shortest path is the optimum blockage point
+        
+        # It is assumed the croc takes the second shortest path from '1' to '10a' as the alternative path.
+        # So the seond shortest path distance is the new alternative distance.
 
         #Above logic is achieved from the below coding section and the shortest path calculated above
 
         #get the blocked point
         blocked_point = shortest_path[1] #as per the above explanation the optimum blocked point is the first point croc will go to from the source point
-        if len(path_distance_sets) != 1:
-            #calculate new alternative distance
-            distance_list.remove(shortest_distance)
-            second_shortest_distance = min(distance_list)
+        
+        #below section finds the new alternative distance
+        
+        #this if condition checks if there is only one possible path between the points. If there is only one possible path between two points then go to else section
+        #if there are are 2 or more then new possible path will be found as below
+        if len(path_distance_sets) > 1:
 
-            #find second shortest path using the second shortest distance calculated above
-            for each_path_distance_set in path_distance_sets:
-                if each_path_distance_set[1] == second_shortest_distance:
-                    new_alternative_path = each_path_distance_set[0]
+            #initialize variables
+            new_possible_path_list = [] 
+            new_possible_path_distance_sets = []
+            new_distance_list = []
+            count = 0
 
-            ratio_of_improvement = shortest_distance/second_shortest_distance
+            #this for loop will create all the possible paths for the alternative path in new_possible_path_list.
+            # the for loop will check if the second point in each path is the blocked point or not because 
+            # if it is the blocked point then the crocodile cannot go in that path. Hence, not a possible alternative
+            for each_path in all_paths:
+                if each_path[1] != blocked_point:
+                    new_possible_path_list.append(each_path)
+                    path_distance = self.computePathDistance(each_path)
+
+                    new_possible_path_distance_sets.append([each_path, path_distance])
+                    path_distance = 0
+                else:
+                    #below count will make sure if all paths between two points are blocked using one blocked point or not
+                    #example assume 15 to 18, there is only two possible paths: [15, 16, 18] and [15, 16, 17, 18]. Then blocking 16 on the 
+                    # shortest path [15, 16, 18] would automatically block [15, 16, 17, 18] path too since 16 is blocked. (This example data,path are just for example purpose)
+
+                    #so if count == number of all possible paths between two points then there is no alternative path after blocking the optimum point on shortest path
+                    count += 1
+            
+            #print the blocked point
             print("Blocked point is:", blocked_point)
-            print("Ratio is", shortest_distance, ":", second_shortest_distance,".","The ratio in float is", ratio_of_improvement)
+            
+            #below if condition will check if the blocking point is present as second point in all paths. If so it will print the relevant
+            #  output since there are no alternative paths since all paths are blocked by one point
+            if count == len(all_paths):
+                print("There is no alternative path since all the other possible paths also contains the blocked point. So the ratio is %d:0. Ratio in float cannot be calculated because any number devided by 0 is undefined. But the ratio of improvement is very large since the denominator is 0." %shortest_distance )
+            else:
+                #under the else section new alternative distance is calculated all over again as shown below by getting the second shortest distance
+
+                #get all the distances in a seperate list called new_distance_list to find the second shortest distance
+                #new_possible_path_distance_sets list contains all new possible paths after blocking the optimum point 
+                for each_path_distance_set in new_possible_path_distance_sets:
+                    new_distance_list.append(each_path_distance_set[1])
+
+                #find the second shortest distance using the min funtion on the new_distance_list
+                second_shortest_distance = min(new_distance_list)
+
+                #find second shortest path using the second shortest distance calculated above
+                for each_path_distance_set in new_possible_path_distance_sets:
+                    if each_path_distance_set[1] == second_shortest_distance:
+                        second_shortest_path = each_path_distance_set[0]
+
+                #calculate ratio of improvement using the shortest distance and second shortest distance
+                ratio_of_improvement = shortest_distance/second_shortest_distance
+
+                #print the ratio
+                print("Ratio is", shortest_distance, ":", second_shortest_distance,".","The ratio in float is", ratio_of_improvement)
         else:
+            #there is only one possible path between the two points
+
             #There is no alternative path because there is only 1 possible path. So the croc has no other way of going to 
             # the destination when the shortest path which is the only path is blocked at the optimum point.
             second_shortest_distance = 0
 
             #The ratio_of_improvement is shortest_distance:0 because there is no alternative path.
             #but a integer/float cannot be devided by 0 due to zero devision error and any number deivded by 0 is undefined but a very large number. 
-            #So the ratio of improvement in this case is veery large. This explains the practical thinking as well since when there is only one path 
-            # and that path is blocked then there is no way for croc to travel which makes a hich improvement
+            #So the ratio of improvement in this case is very large. This explains the practical thinking as well since when there is only one path 
+            # and that path is blocked then there is no way for croc to travel which makes a high improvement
             
             print("Blocked point is:", blocked_point)
             print("There is no alternative path since the only posible path is the shortest path. So the ratio is %d:0. Ratio in float cannot be calculated because any number devided by 0 is undefined. But the ratio of improvement is very large since the denominator is 0." %shortest_distance )
