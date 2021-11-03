@@ -427,11 +427,6 @@ class CrocMonitor:
 if __name__ == '__main__':
 
     cm = CrocMonitor(size)
-    # print (cm.locationList)
-    
-    for i in range(0, len(cm.locationList)):
-        print(cm.locationList[i])
-    
 
     # Changed examples
     cm.computeCosting("15", "18")
